@@ -1,0 +1,1 @@
+Stores persistent bot data as JSON files.

@@ -1,0 +1,11 @@
+{
+  "1180522309447073912": {
+    "text": "A1  A2  A3 …\nB1  B2  B3 …\n…\nAD1 AD2 AD3 …",
+    "positions": {
+      "smile": {
+        "coord": "A2",
+        "sym": "😊"
+      }
+    }
+  }
+}
