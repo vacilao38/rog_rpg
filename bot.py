@@ -1,49 +1,41 @@
-
-import cogs.voice_monitor as voice_monitor
-import cogs.streamlabs_client as streamlabs_client
-from discord.ext import commands
 import os
-import dotenv
+import asyncio
 import discord
+from discord.ext import commands
+from dotenv import load_dotenv
+
+load_dotenv()  # for local dev; SquareCloud uses environment variables in dashboard
+
+token = os.getenv("DISCORD_TOKEN") or os.getenv("TOKEN")
+if not token:
+    print("ERROR: Discord token not found. Set DISCORD_TOKEN environment variable.")
+    raise SystemExit(1)
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=".", intents=intents)
-
-# Auto-load all cogs in cogs/ folder
-import os
-import cogs.voice_monitor as voice_monitor
-from discord.ext import commands
-
-token = "MTM4MzEyMzc4OTM2MDkyMjg0NA.GMD9Xn.oZTrxRMgEssOs_32SKhDIf-8f-9w07GZ7dsdZI"
-
-bot = commands.Bot(command_prefix=".", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 async def load_cogs():
-    for filename in os.listdir("./cogs"):
+    for filename in sorted(os.listdir("cogs")):
         if filename.endswith(".py"):
+            ext = f"cogs.{filename[:-3]}"
             try:
-                await bot.load_extension(f"cogs.{filename[:-3]}")
-                print(f"Loaded cog: {filename}")
+                await bot.load_extension(ext)
+                print("Loaded cog:", filename)
             except Exception as e:
-                print(f"Failed to load {filename}: {e}")
-
-@bot.event
-async def on_ready():
-    print(f"Bot ready: {bot.user}")
-
-async def main():
-    await load_cogs()
-    await bot.start(token)
-
-import asyncio
-asyncio.run(main())
-
+                print("Failed to load", filename, ":", e)
 
 @bot.event
 async def on_ready():
     print(f"Bot ready: {bot.user} (id: {bot.user.id})")
 
+async def main():
+    await load_cogs()
+    await bot.start(token)
+
 if __name__ == "__main__":
-    bot.run(token)
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Bot stopped")

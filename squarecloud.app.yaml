@@ -1,0 +1,10 @@
+version: 1
+
+services:
+  app:
+    runtime: python3
+    build:
+      steps:
+        - pip install -r requirements.txt
+    start:
+      command: python bot.py
